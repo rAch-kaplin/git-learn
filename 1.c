@@ -1,31 +1,31 @@
 #include <stdio.h>
 #include <TXLib.h>
+#include <stdbool.h>
+#include <ctype.h>
 
-double power(double n, int p);
-
+#define STOP '|'
 
 int main(void) {
-    double x, xpow;
-    int exp;
+    char c;
+    long sim = 0L;
+    int lines = 0;
+    int words = 0;
 
-    printf("\tВозводит числа в целые степени!\n");
-    printf("Введите число и целую степень в которую хотите возвести число, для завершения нажмите q.\n");
-    while(scanf("%lf%d", &x, &exp) == 2)
-    {
-        xpow = power(x, exp);
-        printf("%.3g в степени %d равно %.5g\n", x, exp, xpow);
-        printf("Введите следующую пару чисел.");
+    bool inword = false;
+    printf("Введите текст для анализа или | для завершения.\n ");
+
+    while ((c = getchar()) != STOP){
+        sim++;       // считает символы
+        if (c == '\n')
+            lines++;
+        if (!isspace(c) && !inword)
+        {
+            words++;
+            inword = true;
+        }
+        if (isspace(c) && inword)
+            inword = false;
     }
-    printf("Ready");
-
-
+    printf("sim = %ld - lines = %d - words = %d",sim, lines, words );
     return 0;
 }
-    double power(double n, int p){
-        double pow = 1;
-        int i;
-        for (i = 1; i <= p; i++)
-            pow *= n;
-        return pow;
-
-    }
