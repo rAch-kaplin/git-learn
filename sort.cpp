@@ -4,9 +4,12 @@
 #include <string.h>
 #include <assert.h>
 
-void readingLines(char ***str, size_t *SIZE, size_t *row_count, FILE *file);
+void readFile(char ***str, size_t *SIZE, size_t *row_count, FILE *file);
+void resultOfReadFile(char **str, size_t SIZE);
 int my_strcmp(const char *pstr1, const char *pstr2);
 void bubbleSort(char **str, size_t size);
+void oneginSortedFile(char **str, size_t SIZE);
+void printfSortedText(char **str, size_t SIZE);
 
 int main()
 {
@@ -19,63 +22,23 @@ int main()
     char **str = (char**)calloc(row_count, sizeof(char*));
     assert(str != NULL);
 
-    readingLines(&str, &SIZE, &row_count, file);
-#if 0
-    while (fgets(buffer, MAX_LENGHT_STRING, file) != NULL)
-    {
-        size_t len = strlen(buffer);
-        //printf("strlen(buffer = %zu)\n", len);
-        if (len > 0 && buffer[len - 1] == '\n')
-            buffer[len - 1] = '\0';
-
-        //printf("Прочитанная строка: %s\n", buffer);
-
-        str[SIZE] = (char*)calloc((len + 1), sizeof(char));
-        assert(str != NULL);
-        strcpy(str[SIZE], buffer);
-        SIZE++;
-
-        if (SIZE >= row_count)
-        {
-            row_count *= 2;
-            str = (char**)realloc(str, row_count * sizeof(char*));
-            assert(str != NULL);
-        }
-    }
-#endif
+    readFile(&str, &SIZE, &row_count, file);
 
     fclose(file);
 
-    printf("SIZE = <<%zu>>\n\n", SIZE);
-
-    puts("Содержимое считанного файла:\n");
-    for (size_t j = 0; j < SIZE; j++)
-    {
-        printf("---%s\n", str[j]);
-    }
-    putchar('\n');
+    resultOfReadFile(str, SIZE);
 
     bubbleSort(str, SIZE);
 
-    FILE *fp = fopen("onegin_sorted.txt", "w");
-    assert(fp != NULL);
-    for (size_t j = 0; j < SIZE; j++)
-    {
-        fprintf(fp, "%s\n", str[j]);
-    }
-    fclose(fp);
+    oneginSortedFile(str, SIZE);
 
-    puts("Отсортированный текст:\n");
-    for (size_t j = 0; j < SIZE; j++)
-    {
-        printf("%s\n", str[j]);
-        free(str[j]);
-    }
+    printfSortedText(str, SIZE);
+
     free(str);
     return 0;
 }
 
-void readingLines(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
+void readFile(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
 {
     const size_t MAX_LENGHT_STRING = 100;
     char buffer[MAX_LENGHT_STRING] = {};
@@ -90,9 +53,10 @@ void readingLines(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
         //printf("Прочитанная строка: %s\n", buffer);
 
         (*str)[*SIZE] = (char*)calloc((len + 1), sizeof(char));
-        assert((*str) != NULL);
+        assert(*str != NULL);
         strcpy((*str)[*SIZE], buffer);
         (*SIZE)++;
+
         if (*SIZE >= *row_count)
         {
             *row_count *= 2;
@@ -100,6 +64,17 @@ void readingLines(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
             assert(*str != NULL);
         }
     }
+}
+
+void resultOfReadFile(char **str, size_t SIZE)
+{
+    printf("SIZE = <<%zu>>\n\n", SIZE);
+    puts("Содержимое считанного файла:\n");
+    for (size_t j = 0; j < SIZE; j++)
+    {
+        printf("---%s\n", str[j]);
+    }
+    putchar('\n');
 }
 
 int my_strcmp(const char *pstr1, const char *pstr2)
@@ -141,5 +116,26 @@ void bubbleSort(char **str, size_t SIZE)
                 str[j + 1] = buffer;
             }
         }
+    }
+}
+
+void oneginSortedFile(char **str, size_t SIZE)
+{
+    FILE *fp = fopen("onegin_sorted.txt", "w");
+    assert(fp != NULL);
+    for (size_t j = 0; j < SIZE; j++)
+    {
+        fprintf(fp, "%s\n", str[j]);
+    }
+    fclose(fp);
+}
+
+void printfSortedText(char **str, size_t SIZE)
+{
+    puts("Отсортированный текст:\n");
+    for (size_t j = 0; j < SIZE; j++)
+    {
+        printf("%s\n", str[j]);
+        free(str[j]);
     }
 }
