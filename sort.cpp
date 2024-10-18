@@ -4,27 +4,23 @@
 #include <string.h>
 #include <assert.h>
 
-void readFile(char ***str, size_t *SIZE, size_t *row_count, FILE *file);
+void readFile(char ***str, size_t *SIZE, size_t *row_count);
 void resultOfReadFile(char **str, size_t SIZE);
 int my_strcmp(const char *pstr1, const char *pstr2);
 void bubbleSort(char **str, size_t size);
 void oneginSortedFile(char **str, size_t SIZE);
 void printfSortedText(char **str, size_t SIZE);
 
+
 int main()
 {
-    FILE * file = fopen("onegin.txt", "r");
-    assert(file != NULL);
-
     size_t SIZE = 0;
     size_t row_count = 10;
 
     char **str = (char**)calloc(row_count, sizeof(char*));
     assert(str != NULL);
 
-    readFile(&str, &SIZE, &row_count, file);
-
-    fclose(file);
+    readFile(&str, &SIZE, &row_count);
 
     resultOfReadFile(str, SIZE);
 
@@ -34,12 +30,14 @@ int main()
 
     printfSortedText(str, SIZE);
 
-    free(str);
     return 0;
 }
 
-void readFile(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
+void readFile(char ***str, size_t *SIZE, size_t *row_count)
 {
+    FILE * file = fopen("onegin.txt", "r");
+    assert(file != NULL);
+
     const size_t MAX_LENGHT_STRING = 100;
     char buffer[MAX_LENGHT_STRING] = {};
 
@@ -64,6 +62,7 @@ void readFile(char ***str, size_t *SIZE, size_t *row_count, FILE *file)
             assert(*str != NULL);
         }
     }
+    fclose(file);
 }
 
 void resultOfReadFile(char **str, size_t SIZE)
@@ -138,4 +137,5 @@ void printfSortedText(char **str, size_t SIZE)
         printf("%s\n", str[j]);
         free(str[j]);
     }
+    free(str);
 }
